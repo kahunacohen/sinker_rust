@@ -1,11 +1,11 @@
-name: myapp
-version: "1.0"
-author: foo foo@gmail.com>
-about: Does awesome things
+name: sinker
+version: "0.1"
+author: Aaron aaroncohendev@gmail.com>
+about: Sinks local files to remotes.
 args:
-  - verbose:
-      short: v
-      long: verbose
-      help: Sets the level of verbosity
+  - log:
+      short: l
+      long: log
+      help: Sets whether sinker logs.
       takes_value: false
       required: false
