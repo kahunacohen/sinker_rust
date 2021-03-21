@@ -1,0 +1,11 @@
+name: myapp
+version: "1.0"
+author: foo foo@gmail.com>
+about: Does awesome things
+args:
+  - verbose:
+      short: v
+      long: verbose
+      help: Sets the level of verbosity
+      takes_value: false
+      required: false
