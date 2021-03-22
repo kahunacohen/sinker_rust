@@ -15,26 +15,19 @@ pub struct Gist {
 }
 pub struct Config {
   pub log: bool,
-  pub s: Option<String>, //pub gist: Option<Gist>,
+  pub s: IoResult<String>, //pub gist: Option<Gist>,
 }
 impl fmt::Display for Config {
   fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-    write!(f, "Config{{log: {}}}", self.log)
+    write!(f, "Config{{log: {}, s: {:?}}}", self.log, self.s)
   }
 }
 impl Config {
-  pub fn new(matches: &clap::ArgMatches) -> Result<Config, Error> {
-    let c = Config {
+  pub fn new(matches: &clap::ArgMatches) -> Config {
+    return Config {
       log: matches.is_present("log"),
-      s: None, //gist: None,
+      s: fs::read_to_string("/Users/acohen.sinkerrc.json"), //gist: None,
     };
-    match c.read_config_file() {
-      Ok(s) => {
-        c.s = Some(s);
-        Ok(c)
-      }
-      Err(why) => Err(why),
-    }
   }
   pub fn read_config_file(&self) -> IoResult<String> {
     if self.log {
@@ -45,8 +38,6 @@ impl Config {
 }
 
 pub fn run(matches: clap::ArgMatches) {
-  match Config::new(&matches) {
-    Ok(c) => print!("{}", c),
-    Err(why) => println!("{}", why),
-  }
+  let c = Config::new(&matches);
+  println!("{}", c);
 }
