@@ -28,7 +28,7 @@ impl Config {
   pub fn new(matches: &clap::ArgMatches) -> Config {
     return Config {
       log: matches.is_present("log"),
-      s: fs::read_to_string("/Users/acohen/.sinkrrc.json").map_err(|err| {
+      s: fs::read_to_string("/Users/acohen/.sinkerrc.json").map_err(|err| {
         Error::new(
           ErrorKind::InvalidInput,
           format!("not able to read config file: {}", err),
