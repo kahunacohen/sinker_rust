@@ -42,3 +42,18 @@ pub fn run(matches: clap::ArgMatches) {
   let c = Config::new(&matches);
   println!("{}", c);
 }
+
+fn add(x: u8, y: u8) -> u8 {
+  x + y
+}
+
+#[cfg(test)]
+mod tests {
+  // Note this useful idiom: importing names from outer (for mod tests) scope.
+  use super::*;
+
+  #[test]
+  fn test_add() {
+    assert_eq!(add(1, 2), 3);
+  }
+}
