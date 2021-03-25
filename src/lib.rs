@@ -1,16 +1,11 @@
-// use log::info;
+use serde::Deserialize;
 use std::error::Error;
 use std::fmt;
-// use std::fs;
+use std::fs::File;
+use std::io::BufReader;
 use std::result::Result;
 
-use std::fs::File;
-
-use std::io::BufReader;
-
-use serde::Deserialize;
-
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 pub struct GistFile {
   path: String,
   id: String,
@@ -19,12 +14,12 @@ pub struct GistFile {
 #[derive(Deserialize)]
 #[allow(non_snake_case)]
 pub struct Gist {
-  pub accessToken: String,
-  pub files: Vec<GistFile>,
+  accessToken: String,
+  files: Vec<GistFile>,
 }
 pub struct Config {
-  pub log: bool,
-  pub gist: Result<Gist, Box<dyn Error>>,
+  log: bool,
+  gist: Result<Gist, Box<dyn Error>>,
 }
 
 impl fmt::Display for Config {
@@ -50,33 +45,34 @@ impl Config {
     };
   }
 }
-fn x(gist: Gist) {
-  println!("{:?}", gist.accessToken);
-  for f in gist.files {
-    println!("{}", f.path)
-  }
+fn sync(access_token: String, f: GistFile) {
+  println!("{}", access_token);
+  println!("sync: {:?}", f.path);
 }
 pub fn run(matches: clap::ArgMatches) {
-  let c = Config::new(&matches);
-  println!("log: {}", c.log);
-  match c.gist {
-    Ok(gist) => x(gist),
+  let conf = Config::new(&matches);
+  println!("log: {}", conf.log);
+  match conf.gist {
+    Ok(gist) => gist
+      .files
+      .iter()
+      .for_each(|f| sync(gist.accessToken.clone(), f.clone())),
     Err(why) => println!("{}", why),
   }
   println!("Ran!");
 }
 
-fn add(x: u8, y: u8) -> u8 {
-  x + y
-}
+// fn add(x: u8, y: u8) -> u8 {
+//   x + y
+// }
 
-#[cfg(test)]
-mod tests {
-  // Note this useful idiom: importing names from outer (for mod tests) scope.
-  use super::*;
+// #[cfg(test)]
+// mod tests {
+//   // Note this useful idiom: importing names from outer (for mod tests) scope.
+//   use super::*;
 
-  #[test]
-  fn test_add() {
-    assert_eq!(add(1, 2), 3);
-  }
-}
+//   #[test]
+//   fn test_add() {
+//     assert_eq!(add(1, 2), 3);
+//   }
+// }
