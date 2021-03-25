@@ -18,8 +18,8 @@ pub struct GistFile {
 
 #[derive(Deserialize)]
 pub struct Gist {
-  access_token: String,
-  files: Vec<GistFile>,
+  pub accessToken: String,
+  pub files: Vec<GistFile>,
 }
 pub struct Config {
   pub log: bool,
@@ -34,7 +34,7 @@ impl fmt::Display for Config {
 fn parse_config_file() -> Result<Gist, Box<dyn Error>> {
   // Open the file in read-only mode with buffer.
   // If opening fails, return Result with Error varient.
-  let file = File::open("/Users/acohen/.sinkerrc.json")?;
+  let file = File::open("./.sinkerrc.json")?;
   let reader = BufReader::new(file);
   // Read the JSON contents of the file as an instance of `Gist`. Again, if error, return
   //early and propogate to caller.
@@ -54,8 +54,8 @@ pub fn run(matches: clap::ArgMatches) {
   let c = Config::new(&matches);
   println!("{}", c.log);
   match c.gist {
-    Ok(_) => println!("ok"),
-    Err(err) => println!("{}", err),
+    Ok(gist) => println!("{:?}", gist.accessToken),
+    Err(why) => println!("{}", why),
   }
   println!("Ran!");
 }
