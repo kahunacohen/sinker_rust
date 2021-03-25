@@ -17,6 +17,7 @@ pub struct GistFile {
 }
 
 #[derive(Deserialize)]
+#[allow(non_snake_case)]
 pub struct Gist {
   pub accessToken: String,
   pub files: Vec<GistFile>,
@@ -49,12 +50,17 @@ impl Config {
     };
   }
 }
-
+fn x(gist: Gist) {
+  println!("{:?}", gist.accessToken);
+  for f in gist.files {
+    println!("{}", f.path)
+  }
+}
 pub fn run(matches: clap::ArgMatches) {
   let c = Config::new(&matches);
-  println!("{}", c.log);
+  println!("log: {}", c.log);
   match c.gist {
-    Ok(gist) => println!("{:?}", gist.accessToken),
+    Ok(gist) => x(gist),
     Err(why) => println!("{}", why),
   }
   println!("Ran!");
