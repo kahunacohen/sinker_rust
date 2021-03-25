@@ -45,7 +45,7 @@ impl Config {
     };
   }
 }
-fn sync(access_token: String, f: GistFile) {
+fn sync(access_token: &String, f: GistFile) {
   println!("{}", access_token);
   println!("sync: {:?}", f.path);
 }
@@ -53,10 +53,12 @@ pub fn run(matches: clap::ArgMatches) {
   let conf = Config::new(&matches);
   println!("log: {}", conf.log);
   match conf.gist {
-    Ok(gist) => gist
-      .files
-      .iter()
-      .for_each(|f| sync(gist.accessToken.clone(), f.clone())),
+    Ok(gist) => {
+      for f in gist.files {
+        sync(&gist.accessToken, f);
+      }
+    }
+
     Err(why) => println!("{}", why),
   }
   println!("Ran!");
