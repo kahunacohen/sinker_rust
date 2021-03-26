@@ -45,23 +45,22 @@ impl Config {
     };
   }
 }
-fn sync(access_token: &String, f: GistFile) {
-  println!("{}", access_token);
-  println!("sync: {:?}", f.path);
+fn get_sync_data(_access_token: &String, f: GistFile, log: bool) {
+  if log {
+    println!("getting sync data for {}", f.path);
+  }
 }
 pub fn run(matches: clap::ArgMatches) {
   let conf = Config::new(&matches);
-  println!("log: {}", conf.log);
   match conf.gist {
     Ok(gist) => {
       for f in gist.files {
-        sync(&gist.accessToken, f);
+        get_sync_data(&gist.accessToken, f, conf.log);
       }
     }
 
     Err(why) => println!("{}", why),
   }
-  println!("Ran!");
 }
 
 // fn add(x: u8, y: u8) -> u8 {
