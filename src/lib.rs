@@ -63,19 +63,9 @@ fn get_sync_data(
     if log {
         println!("getting sync data for {}", f.path);
     }
-    let md = fs::metadata(f.path)?;
     Ok(SyncData {
-        file_modified: md.modified().unwrap().into(),
+        file_modified: fs::metadata(f.path)?.modified()?.into(),
     })
-    // let modified = match fs::metadata(f.path) {
-    //     Ok(data) => {
-    //         let mod_datetime: DateTime<Utc> = data.modified().unwrap().into();
-    //         println!("{}", mod_datetime);
-    //         Ok(mod_datetime)
-    //     }
-    //     Err(why) => Err(why),
-    // };
-    // print!("{:?}", modified);
 }
 async fn x() -> Result<(), Box<dyn std::error::Error>> {
     let resp = reqwest::get("https://httpbin.org/ip")
