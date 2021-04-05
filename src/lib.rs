@@ -25,6 +25,7 @@ pub struct Config {
     log: bool,
     gist: Result<Gist, Box<dyn Error>>,
 }
+struct CustomError(String);
 
 impl fmt::Display for Config {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
