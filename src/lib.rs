@@ -4,7 +4,9 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
 use std::fs;
+use std::fs::File;
 use std::io::BufReader;
+use std::io::Error as IOError;
 use std::io::Result as IoResult;
 use std::result::Result;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -25,7 +27,6 @@ pub struct Config {
     log: bool,
     gist: Result<Gist, Box<dyn Error>>,
 }
-struct CustomError(String);
 
 impl fmt::Display for Config {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -76,7 +77,35 @@ async fn x() -> Result<(), Box<dyn std::error::Error>> {
     println!("response: {:#?}", resp);
     Ok(())
 }
+
+#[derive(Debug)]
+enum ConfigError {
+    Io(IOError),
+}
+impl From<IOError> for ConfigError {
+    fn from(error: IOError) -> Self {
+        ConfigError::Io(error)
+    }
+}
+impl fmt::Display for ConfigError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "configuration error")
+    }
+}
+fn test_concat_err() -> Result<File, ConfigError> {
+    let f = fs::File::open("./.sinkrrc.json")?;
+    return Ok(f);
+}
 pub async fn run(matches: clap::ArgMatches) {
+    match test_concat_err() {
+        Ok(f) => print!("{:?}", f),
+        Err(why) => {
+            print!("{}", why);
+            match why {
+                Io => print!("io error"),
+            }
+        }
+    }
     //x().await;
     let conf = Config::new(&matches);
     match conf.gist {
