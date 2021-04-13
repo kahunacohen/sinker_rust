@@ -99,10 +99,10 @@ fn test_concat_err() -> Result<File, ConfigError> {
 pub async fn run(matches: clap::ArgMatches) {
     match test_concat_err() {
         Ok(f) => print!("{:?}", f),
-        Err(why) => {
-            print!("{}", why);
-            match why {
-                Io => print!("io error"),
+        Err(err) => {
+            print!("{}:", err);
+            match err {
+                Io => print!("problem opening or reading file"),
             }
         }
     }
