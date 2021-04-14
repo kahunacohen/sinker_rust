@@ -22,7 +22,7 @@ pub struct Gist {
 }
 pub struct Config {
     log: bool,
-    gist: Result<Gist, Box<dyn Error>>,
+    gist: Result<Gist, errors::ConfigError>,
 }
 
 impl fmt::Display for Config {
@@ -30,7 +30,7 @@ impl fmt::Display for Config {
         write!(f, "Config{{log: {}}}", self.log,)
     }
 }
-fn parse_config_file() -> Result<Gist, Box<dyn Error>> {
+fn parse_config_file() -> Result<Gist, errors::ConfigError> {
     // Open the file in read-only mode with buffer.
     // If opening fails, return Result with Error varient.
     let file = fs::File::open("./.sinkerrc.json")?;
