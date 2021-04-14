@@ -1,15 +1,12 @@
-use chrono::{DateTime, FixedOffset, ParseResult, Utc};
+use chrono::{DateTime, Utc};
 use serde::Deserialize;
-use std::collections::HashMap;
 use std::error::Error;
 use std::fmt;
 use std::fs;
-use std::fs::File;
 use std::io::BufReader;
-use std::io::Error as IOError;
-use std::io::Result as IoResult;
 use std::result::Result;
-use std::time::{SystemTime, UNIX_EPOCH};
+
+mod errors;
 
 #[derive(Clone, Deserialize)]
 pub struct GistFile {
@@ -69,44 +66,8 @@ fn get_sync_data(
         file_modified: fs::metadata(f.path)?.modified()?.into(),
     })
 }
-async fn x() -> Result<(), Box<dyn std::error::Error>> {
-    let resp = reqwest::get("https://httpbin.org/ip")
-        .await?
-        .json::<HashMap<String, String>>()
-        .await?;
-    println!("response: {:#?}", resp);
-    Ok(())
-}
 
-#[derive(Debug)]
-enum ConfigError {
-    Io(IOError),
-}
-impl From<IOError> for ConfigError {
-    fn from(error: IOError) -> Self {
-        ConfigError::Io(error)
-    }
-}
-impl fmt::Display for ConfigError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "configuration error")
-    }
-}
-fn test_concat_err() -> Result<File, ConfigError> {
-    let f = fs::File::open("./.sinkrrc.json")?;
-    return Ok(f);
-}
-pub async fn run(matches: clap::ArgMatches) {
-    match test_concat_err() {
-        Ok(f) => print!("{:?}", f),
-        Err(err) => {
-            print!("{}:", err);
-            match err {
-                Io => print!("problem opening or reading file"),
-            }
-        }
-    }
-    //x().await;
+pub fn run(matches: clap::ArgMatches) {
     let conf = Config::new(&matches);
     match conf.gist {
         Ok(gist) => {
@@ -119,18 +80,3 @@ pub async fn run(matches: clap::ArgMatches) {
         Err(why) => println!("{}", why),
     }
 }
-
-// fn add(x: u8, y: u8) -> u8 {
-//   x + y
-// }
-
-// #[cfg(test)]
-// mod tests {
-//   // Note this useful idiom: importing names from outer (for mod tests) scope.
-//   use super::*;
-
-//   #[test]
-//   fn test_add() {
-//     assert_eq!(add(1, 2), 3);
-//   }
-// }
