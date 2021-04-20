@@ -13,7 +13,7 @@ pub struct GistFile {
 #[derive(Deserialize)]
 #[allow(non_snake_case)]
 pub struct Gist {
-  pub accessToken: String,
+  pub access_token: String,
   pub files: Vec<GistFile>,
 }
 pub struct Config {
