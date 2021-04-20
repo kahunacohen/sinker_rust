@@ -7,6 +7,7 @@ use std::result::Result;
 mod config;
 mod errors;
 
+#[derive(Debug)]
 struct SyncData<'a> {
     access_token: &'a String,
     // file_name: String,
@@ -40,8 +41,7 @@ pub fn run(matches: clap::ArgMatches) {
                 // We have to borrow the access token string because the reference is taken
                 // in previous iterations of the loop.
                 let y = get_sync_data(&gist.access_token, f, conf.log).unwrap();
-                println!("{}", y.file_modified);
-                println!("{}", y.access_token);
+                println!("{:?}", y);
             }
         }
         Err(why) => {
