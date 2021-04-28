@@ -1,6 +1,8 @@
 use chrono::{DateTime, Utc};
 use std::error::Error;
+use std::ffi::OsString;
 use std::fs;
+use std::path::Path;
 use std::process;
 use std::result::Result;
 
@@ -10,7 +12,7 @@ mod errors;
 #[derive(Debug)]
 struct SyncData<'a> {
     access_token: &'a String,
-    // file_name: String,
+    file_name: OsString,
     // gist_content: String,
     file_modified: DateTime<Utc>, // gist_last_mod: DateTime<Utc>,
 }
@@ -20,9 +22,10 @@ fn get_sync_data(
     log: bool,
 ) -> Result<SyncData, Box<dyn Error>> {
     if log {
-        println!("getting sync data for {}", f.path);
+        println!("getting sync data for {}", f.path)
     }
     Ok(SyncData {
+        file_name: OsString::from(Path::new(&f.path).file_name().unwrap()),
         access_token: access_token,
         file_modified: fs::metadata(f.path)?.modified()?.into(),
     })
@@ -40,6 +43,7 @@ pub fn run(matches: clap::ArgMatches) {
             for f in gist.files {
                 // We have to borrow the access token string because the reference is taken
                 // in previous iterations of the loop.
+
                 let y = get_sync_data(&gist.access_token, f, conf.log).unwrap();
                 println!("{:?}", y);
             }
