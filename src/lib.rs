@@ -24,8 +24,10 @@ fn get_sync_data(
     if log {
         println!("getting sync data for {}", f.path)
     }
+    let p = Path::new(&f.path).file_name().ok_or("invalid file name")?;
+    let fname = OsString::from(p);
     Ok(SyncData {
-        file_name: OsString::from(Path::new(&f.path).file_name().unwrap()),
+        file_name: fname,
         access_token: access_token,
         file_modified: fs::metadata(f.path)?.modified()?.into(),
     })
