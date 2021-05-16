@@ -25,7 +25,7 @@ impl From<serde_json::Error> for ConfigError {
 }
 
 // Tell rust how to print the ConfigError. For an IO variant, give the
-// caller some context that it's config error, that it happenen when trying
+// caller some context that it's config error, that it happened when trying
 // to load the file and print out the original error.
 impl fmt::Display for ConfigError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -34,6 +34,23 @@ impl fmt::Display for ConfigError {
             ConfigError::Parse(ref e) => {
                 write!(f, "configuration error: problem parsing json: {}", e)
             }
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum SyncError {
+    Io(io::Error),
+}
+impl From<io::Error> for SyncError {
+    fn from(error: io::Error) -> Self {
+        SyncError::Io(error)
+    }
+}
+impl fmt::Display for SyncError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            SyncError::Io(ref e) => write!(f, "problem syncing: couldn't read local file: {}", e),
         }
     }
 }
