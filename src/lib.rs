@@ -45,12 +45,15 @@ fn print_files(gist: config::Gist) -> Result<u8, errors::ConfigError> {
     }
     Ok(1)
 }
+
 // run loads the config. If it's ok it gets all the data needed needed for each file, as
 // represented by struct SyncData. If successful, it pipes this along to function responsible
 // for actually syncing each file.
 pub fn run(matches: clap::ArgMatches) {
     let conf = config::Config::new(&matches);
     conf.gist.and_then(print_files).unwrap();
+    // conf.gist.and_then(collect_sync_data).and_then(sync)
+
     // match conf.gist {
     //     Ok(gist) => {
     //         // If the config is valid, loop through each file and generate sync data.
