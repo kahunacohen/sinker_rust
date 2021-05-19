@@ -39,33 +39,38 @@ fn get_sync_data(
         file_modified: fs::metadata(f.path)?.modified()?.into(),
     })
 }
-
+fn print_files(gist: config::Gist) -> Result<u8, errors::ConfigError> {
+    for f in gist.files {
+        println!("{:?}", f.path);
+    }
+    Ok(1)
+}
 // run loads the config. If it's ok it gets all the data needed needed for each file, as
 // represented by struct SyncData. If successful, it pipes this along to function responsible
 // for actually syncing each file.
 pub fn run(matches: clap::ArgMatches) {
-    // load the config from the file.
     let conf = config::Config::new(&matches);
-    match conf.gist {
-        Ok(gist) => {
-            // If the config is valid, loop through each file and generate sync data.
-            for f in gist.files {
-                // We have to borrow the access token string because the reference is taken
-                // in previous iterations of the loop.
+    conf.gist.and_then(print_files).unwrap();
+    // match conf.gist {
+    //     Ok(gist) => {
+    //         // If the config is valid, loop through each file and generate sync data.
+    //         for f in gist.files {
+    //             // We have to borrow the access token string because the reference is taken
+    //             // in previous iterations of the loop.
 
-                match get_sync_data(&gist.access_token, f, conf.log) {
-                    Ok(data) => println!("{:?}", data),
-                    Err(why) => {
-                        eprint!("{}", why);
-                        process::exit(1);
-                    }
-                }
-            }
-        }
-        Err(why) => {
-            // If there's an error in getting config report it and exit.
-            eprintln!("{}", why);
-            process::exit(1);
-        }
-    }
+    //             match get_sync_data(&gist.access_token, f, conf.log) {
+    //                 Ok(data) => println!("{:?}", data),
+    //                 Err(why) => {
+    //                     eprint!("{}", why);
+    //                     process::exit(1);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     Err(why) => {
+    //         // If there's an error in getting config report it and exit.
+    //         eprintln!("{}", why);
+    //         process::exit(1);
+    //     }
+    // }
 }
